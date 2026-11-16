@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Proyek TI | Akademik Nasswa</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .course-page {
+            max-width: 1050px;
+            margin: auto;
+            padding: 30px 20px 60px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: #9c5875;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .course-hero {
+            background: linear-gradient(135deg, #f8e6ed, #f1eafa);
+            border-radius: 24px;
+            padding: 35px;
+            margin-bottom: 28px;
+        }
+
+        .course-label {
+            color: #9c5875;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .course-hero h1 {
+            color: #493746;
+            margin: 12px 0;
+            font-size: clamp(26px, 4vw, 38px);
+        }
+
+        .course-hero p {
+            color: #6e5c6a;
+            line-height: 1.7;
+        }
+
+        .course-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 14px;
+            margin-top: 25px;
+        }
+
+        .info-box {
+            background: rgba(255,255,255,0.75);
+            padding: 16px;
+            border-radius: 15px;
+        }
+
+        .info-box small {
+            display: block;
+            color: #887486;
+            margin-bottom: 7px;
+        }
+
+        .info-box strong {
+            color: #493746;
+        }
+
+        .course-section {
+            background: #fffdfd;
+            border: 1px solid #f0e5eb;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .course-section h2 {
+            color: #6d4960;
+            margin-top: 0;
+            font-size: 21px;
+        }
+
+        .section-description {
+            color: #857582;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .empty-state {
+            background: #fbf6f9;
+            border: 1px dashed #dfc7d4;
+            border-radius: 14px;
+            padding: 18px;
+            color: #8b7180;
+            line-height: 1.7;
+        }
+
+        .resource-link {
+            display: block;
+            background: #fbf5f8;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 12px;
+            color: #8e5572;
+            text-decoration: none;
+            overflow-wrap: anywhere;
+        }
+
+        .resource-link:hover {
+            background: #f4e5ed;
+        }
+
+        .note-area {
+            width: 100%;
+            min-height: 140px;
+            box-sizing: border-box;
+            border: 1px solid #e6d5df;
+            border-radius: 14px;
+            padding: 14px;
+            font: inherit;
+            line-height: 1.6;
+            resize: vertical;
+            background: #fffafd;
+        }
+
+        .save-note {
+            margin-top: 12px;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 18px;
+            background: #c989a5;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .save-status {
+            color: #6b8069;
+            font-size: 14px;
+        }
+
+        .course-footer {
+            text-align: center;
+            color: #927f8c;
+            padding-top: 20px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .course-page {
+                padding: 20px 14px 40px;
+            }
+
+            .course-hero,
+            .course-section {
+                padding: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="course-page">
+
+        <a class="back-link" href="index.html">
+            ← Kembali ke Beranda
+        </a>
+
+        <header class="course-hero">
+            <span class="course-label">Semester 4 · Ruang Belajar</span>
+
+            <h1>Manajemen Proyek Teknologi Informasi</h1>
+
+            <p>
+                Selamat datang di ruang belajar Manajemen Proyek TI.
+                Semua materi, tugas, jadwal, dan catatan untuk mata kuliah
+                ini dikumpulkan di halaman khusus ini.
+            </p>
+
+            <div class="course-info-grid">
+                <div class="info-box">
+                    <small>📅 Hari</small>
+                    <strong>Senin</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>⏰ Waktu</small>
+                    <strong>07.30–10.00</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>📍 Lokasi</small>
+                    <strong>Gedung Machdor</strong>
+                </div>
+
+                <div class="info-box">
+                    <small>🚪 Ruangan</small>
+                    <strong>D 406</strong>
+                </div>
+            </div>
+        </header>
+
+        <section class="course-section" id="materi">
+            <h2>📚 Materi Perkuliahan</h2>
+            <p class="section-description">
+                Simpan materi PDF khusus mata kuliah Manajemen Proyek TI di sini.
+            </p>
+
+            <div id="materi-list">
+                <div class="empty-state">
+                    Belum ada materi. Tambahkan file PDF kamu ke folder
+                    <strong>materi/manajemen-proyek-ti/</strong>, lalu
+                    masukkan tautannya di bagian ini.
+                </div>
+            </div>
+        </section>
+
+        <section class="course-section" id="tugas">
+            <h2>📝 Tugas Kuliah</h2>
+            <p class="section-description">
+                Bagian ini khusus untuk tugas Manajemen Proyek TI.
+            </p>
+
+            <div id="tugas-list">
+                <div class="empty-state">
+                    Belum ada tugas yang ditambahkan. Nanti kita bisa
+                    mengisi nama tugas, deskripsi, tenggat, dan status pengerjaan.
+                </div>
+            </div>
+        </section>
+
+        <section class="course-section" id="jadwal">
+            <h2>🗓️ Jadwal Perkuliahan</h2>
+
+            <div class="info-box">
+                <small>Jadwal yang kamu berikan</small>
+                <strong>Senin, pukul 07.30–10.00</strong>
+                <p>Gedung Machdor, ruang D 406</p>
+            </div>
+        </section>
+
+        <section class="course-section" id="catatan">
+            <h2>✍️ Catatan Pribadi</h2>
+            <p class="section-description">
+                Tulis rangkuman atau hal penting dari perkuliahan.
+                Catatan disimpan di browser perangkat ini.
+            </p>
+
+            <textarea
+                class="note-area"
+                id="course-note"
+                placeholder="Tulis catatan kuliahmu di sini..."
+            ></textarea>
+
+            <button class="save-note" id="save-note">
+                Simpan Catatan
+            </button>
+
+            <p class="save-status" id="save-status" aria-live="polite"></p>
+        </section>
+
+        <footer class="course-footer">
+            Made with ♡ · Academic Space by Nasswa
+        </footer>
+
+    </main>
+
+    <script>
+        const noteKey = "catatan-manajemen-proyek-ti";
+        const noteArea = document.getElementById("course-note");
+        const saveButton = document.getElementById("save-note");
+        const saveStatus = document.getElementById("save-status");
+
+        try {
+            noteArea.value = localStorage.getItem(noteKey) || "";
+        } catch (error) {
+            saveStatus.textContent =
+                "Penyimpanan catatan tidak tersedia di browser ini.";
+            saveButton.disabled = true;
+        }
+
+        saveButton.addEventListener("click", function () {
+            try {
+                localStorage.setItem(noteKey, noteArea.value);
+                saveStatus.textContent = "Catatan berhasil disimpan ♡";
+            } catch (error) {
+                saveStatus.textContent =
+                    "Catatan belum bisa disimpan di browser ini.";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Academic Space | Nasswa Ovita</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER / PERSONAL INTRO (GIRLY POLKA) -->
+    <header class="profile-header">
+        <div class="profile-intro">
+            <span class="profile-label">♡ WELCOME TO MY LITTLE SPACE</span>
+            <p class="hello-text">Hello, everyone! I'm</p>
+            <h1>Nasswa <span>Ovita.</span></h1>
+            <p class="profile-description">
+                A student who loves learning, growing,
+                and exploring new things through technology.
+            </p>
+            <div class="profile-tags">
+                <span>🎓 Informatics Engineering</span>
+                <span>💻 Semester 5</span>
+                <span>🎀 Girly Polka Edition</span>
+            </div>
+            <a href="#mata-kuliah" class="profile-button">
+                Explore My Folders <span>→</span>
+            </a>
+            <p class="profile-signature">little steps, lovely progress ♡</p>
+        </div>
+
+        <div class="profile-photo-area">
+            <div class="photo-blob"></div>
+            <div class="photo-frame">
+                <img
+                    src="images/nasswa.jpeg"
+                    alt="Foto Nasswa Ovita"
+                    class="profile-photo"
+                >
+            </div>
+            <div class="photo-note note-top">✿ just be yourself</div>
+            <div class="photo-note note-bottom">♡ keep blooming</div>
+            <span class="photo-sparkle sparkle-one">✦</span>
+            <span class="photo-sparkle sparkle-two">✧</span>
+        </div>
+    </header>
+
+    <!-- FLOATING SIDEBAR NAVIGASI DI PINGGIR KANAN -->
+    <nav class="main-nav">
+        <a href="#beranda" class="nav-link active">⌂ Beranda</a>
+        <a href="#mata-kuliah" class="nav-link">📁 Mata Kuliah</a>
+        <a href="#quick-upload" class="nav-link">+ Kumpulkan</a>
+        <a href="#materi" class="nav-link">♡ Folder Materi</a>
+        <a href="#tugas" class="nav-link">✎ Folder Tugas</a>
+        <a href="#project" class="nav-link">✿ Project</a>
+    </nav>
+
+    <main>
+        <!-- NOTIFIKASI DEADLINE OTOMATIS -->
+        <div id="deadline-notify-box"></div>
+
+        <!-- BERANDA -->
+        <section id="beranda" class="hero-card">
+            <div class="hero-content">
+                <span class="small-label">HELLO, STUDENT! ♡</span>
+                <h2>Selamat Datang di <em>Ruang Belajarku</em></h2>
+                <p>
+                    Tempat khusus untuk menyimpan materi kuliah,
+                    mengumpulkan tugas ke dalam folder mata kuliah,
+                    memantau deadline terdekat, dan mendokumentasikan proses belajar.
+                </p>
+                <a href="#quick-upload" class="main-button">
+                    + Kumpulkan Tugas / Materi <span>→</span>
+                </a>
+            </div>
+
+            <div class="hero-decoration" aria-hidden="true">
+                <div class="decor-circle">
+                    <span>୨୧</span>
+                </div>
+                <span class="floating-star star-one">✦</span>
+                <span class="floating-star star-two">✧</span>
+                <span class="floating-heart">♡</span>
+            </div>
+        </section>
+
+        <!-- RINGKASAN -->
+        <div class="section-heading">
+            <div>
+                <span class="small-label">YOUR LEARNING SPACE</span>
+                <h2>My <em>Dashboard</em></h2>
+            </div>
+            <span class="heading-decoration">୨୧</span>
+        </div>
+
+        <div class="dashboard-grid">
+            <a href="#materi" class="dashboard-card pink-card">
+                <span class="card-icon">📚</span>
+                <span class="card-number">01</span>
+                <h3>Folder Materi</h3>
+                <p>Arsip materi PDF, PPT, dan referensi per mata kuliah.</p>
+                <span class="card-link">Buka folder materi →</span>
+            </a>
+
+            <a href="#tugas" class="dashboard-card lavender-card">
+                <span class="card-icon">📝</span>
+                <span class="card-number">02</span>
+                <h3>Folder Tugas</h3>
+                <p>Urutan tugas belum selesai &amp; pengumpulan berkas kuliah.</p>
+                <span class="card-link">Buka folder tugas →</span>
+            </a>
+
+            <a href="#project" class="dashboard-card cream-card">
+                <span class="card-icon">💻</span>
+                <span class="card-number">03</span>
+                <h3>Project System</h3>
+                <p>Ruang pengembangan ide dan proyek sistem.</p>
+                <span class="card-link">Lihat project →</span>
+            </a>
+        </div>
+
+        <!-- DAFTAR MATA KULIAH -->
+        <section id="mata-kuliah" class="content-card">
+            <span class="small-label">MY SEMESTER 5 JOURNEY</span>
+            <h2>🌷 Ruang <em>Mata Kuliahku</em></h2>
+            <p>
+                Pilih mata kuliah untuk membuka halaman folder khusus
+                berisi daftar materi, tugas, jadwal, dan catatanmu.
+            </p>
+
+            <div class="dashboard-grid" style="margin-top: 22px; margin-bottom: 0;">
+                <a href="mata-kuliah.html?id=manajemen-proyek-ti" class="dashboard-card pink-card">
+                    <span class="card-icon">📋</span>
+                    <h3>Manajemen Proyek TI</h3>
+                    <p>Senin · 07.30–10.00 · D 406</p>
+                    <span class="card-link">Buka folder matkul →</span>
+                </a>
+
+                <a href="mata-kuliah.html?id=pemrograman-platform" class="dashboard-card lavender-card">
+                    <span class="card-icon">💻</span>
+                    <h3>Pemrograman Berbasis Platform</h3>
+                    <p>Senin · 10.00–12.30 · D 406</p>
+                    <span class="card-link">Buka folder matkul →</span>
+                </a>
+
+                <a href="mata-kuliah.html?id=interaksi-manusia-komputer" class="dashboard-card cream-card">
+                    <span class="card-icon">🖱️</span>
+                    <h3>Interaksi Manusia &amp; Komputer</h3>
+                    <p>Jadwal fleksibel · Ruang Kuliah</p>
+                    <span class="card-link">Buka folder matkul →</span>
+                </a>
+
+                <a href="mata-kuliah.html?id=analisis-design-pl" class="dashboard-card pink-card">
+                    <span class="card-icon">🧩</span>
+                    <h3>Analisis dan Design PL</h3>
+                    <p>Senin · 13.00–15.30 · D 406</p>
+                    <span class="card-link">Buka folder matkul →</span>
+                </a>
+
+                <a href="mata-kuliah.html?id=tata-tulis-ilmiah" class="dashboard-card lavender-card">
+                    <span class="card-icon">📖</span>
+                    <h3>Tata Tulis Ilmiah</h3>
+                    <p>Selasa · Mulai 09.10 · D 406</p>
+                    <span class="card-link">Buka folder matkul →</span>
+                </a>
+
+                <a href="mata-kuliah.html?id=teknologi-ar-vr" class="dashboard-card cream-card">
+                    <span class="card-icon">🥽</span>
+                    <h3>Teknologi AR/VR</h3>
+                    <p>Selasa · 13.00–15.30 · D 406</p>
+                    <span class="card-link">Buka folder matkul →</span>
+                </a>
+
+                <a href="mata-kuliah.html?id=ai-computing-platform" class="dashboard-card pink-card">
+                    <span class="card-icon">🤖</span>
+                    <h3>AI Computing Platform</h3>
+                    <p>Rabu · 18.00–22.00 · D 303</p>
+                    <span class="card-link">Buka folder matkul →</span>
+                </a>
+
+                <a href="mata-kuliah.html?id=aik-4" class="dashboard-card lavender-card">
+                    <span class="card-icon">🌸</span>
+                    <h3>AIK 4</h3>
+                    <p>Kamis · 10.00–11.40 · D 405</p>
+                    <span class="card-link">Buka folder matkul →</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- QUICK SUBMIT KE FOLDER -->
+        <section id="quick-upload" class="content-card">
+            <span class="small-label">QUICK ARCHIVE</span>
+            <h2>🎀 Kumpulkan <em>Tugas &amp; Materi</em></h2>
+            <p>
+                Unggah berkas atau tautan tugas/materi di sini, dan sistem akan
+                otomatis menyimpannya ke dalam folder mata kuliah terkait.
+            </p>
+
+            <form id="quick-submit-form" class="submit-box" style="margin-top: 18px; margin-bottom: 0;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="quick-matkul">Pilih Mata Kuliah</label>
+                        <select id="quick-matkul" class="form-control" required>
+                            <option value="manajemen-proyek-ti">Manajemen Proyek TI</option>
+                            <option value="pemrograman-platform">Pemrograman Berbasis Platform</option>
+                            <option value="interaksi-manusia-komputer">Interaksi Manusia &amp; Komputer</option>
+                            <option value="analisis-design-pl">Analisis dan Design PL</option>
+                            <option value="tata-tulis-ilmiah">Tata Tulis Ilmiah</option>
+                            <option value="teknologi-ar-vr">Teknologi AR/VR</option>
+                            <option value="ai-computing-platform">AI Computing Platform</option>
+                            <option value="aik-4">AIK 4</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-kategori">Simpan ke Folder</label>
+                        <select id="quick-kategori" class="form-control" required>
+                            <option value="tugas">📝 Folder Tugas Kuliah</option>
+                            <option value="materi">📚 Folder Materi Perkuliahan</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-judul">Judul Tugas / Materi</label>
+                        <input type="text" id="quick-judul" class="form-control" placeholder="Contoh: Laporan Praktikum 2 / Modul Pertemuan 3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-deadline">Deadline Tugas (Isi jika Tugas)</label>
+                        <input type="date" id="quick-deadline" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-file">Upload File (PDF / DOCX / ZIP)</label>
+                        <input type="file" id="quick-file" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-link">Atau Tautan (Google Drive / GitHub)</label>
+                        <input type="url" id="quick-link" class="form-control" placeholder="https://drive.google.com/...">
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="quick-catatan">Catatan Singkat (Opsional)</label>
+                        <input type="text" id="quick-catatan" class="form-control" placeholder="Contoh: Kelompok 2 · Sudah direvisi">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit-polka">
+                    Simpan ke Folder Arsip ♡
+                </button>
+            </form>
+        </section>
+
+        <!-- FOLDER MATERI PERKULIAHAN -->
+        <section id="materi" class="content-card">
+            <span class="small-label">LEARN SOMETHING NEW</span>
+            <h2>📚 Folder <em>Materi Perkuliahan</em></h2>
+            <p>
+                Semua materi, rangkuman, dan referensi yang kamu unggah
+                tersusun rapi dalam folder per mata kuliah di bawah ini.
+            </p>
+
+            <div id="index-materi-folders"></div>
+        </section>
+
+        <!-- FOLDER TUGAS KULIAH -->
+        <section id="tugas" class="content-card">
+            <span class="small-label">PRIORITY &amp; ARCHIVE</span>
+            <h2>📝 Folder <em>Tugas Kuliah</em></h2>
+            <p>
+                Tugas yang belum selesai otomatis diurutkan dari deadline paling dekat.
+                Centang kotak di samping judul tugas jika sudah selesai dikerjakan.
+            </p>
+
+            <div id="index-tugas-folders"></div>
+        </section>
+
+        <!-- PROJECT SYSTEM (INTERAKTIF) -->
+        <section id="project" class="content-card project-card">
+            <span class="small-label">LET'S CREATE SOMETHING</span>
+            <h2>💻 Project <em>System</em></h2>
+            <p>
+                Dokumentasi tema penelitian, rancangan sistem, dan proyek pengembangan aplikasi selama kuliah.
+            </p>
+
+            <form id="project-submit-form" class="submit-box" style="margin-top: 18px;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="proj-judul">Nama Project / Sistem</label>
+                        <input type="text" id="proj-judul" class="form-control" placeholder="Contoh: StockMate POS / My Academic Space" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proj-status">Status Pengerjaan</label>
+                        <select id="proj-status" class="form-control">
+                            <option value="In Progress">🚧 Sedang Dikembangkan</option>
+                            <option value="Completed">✓ Selesai / Siap Demo</option>
+                            <option value="Planning">📝 Perancangan / Proposal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proj-tech">Teknologi / Tools</label>
+                        <input type="text" id="proj-tech" class="form-control" placeholder="Contoh: HTML5, CSS3, JavaScript, Python">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proj-link">Link GitHub / Demo / Figma</label>
+                        <input type="url" id="proj-link" class="form-control" placeholder="https://github.com/nasswaovita/...">
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="proj-deskripsi">Tema &amp; Tujuan Project</label>
+                        <input type="text" id="proj-deskripsi" class="form-control" placeholder="Jelaskan singkat tujuan atau fitur utama sistem..." required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit-polka">
+                    + Tambahkan Project ♡
+                </button>
+            </form>
+
+            <div id="index-project-list"></div>
+        </section>
+
+        <!-- PENUTUP -->
+        <div class="closing-note">
+            <span>୨୧</span>
+            <p>Small progress is still progress.</p>
+            <span class="closing-subtitle">Keep learning, keep growing. 🌷</span>
+        </div>
+    </main>
+
+    <footer>
+        <p>Made with ♡ for my academic journey</p>
+        <p class="footer-small">My Academic Space · Semester 5 · Girly Polka Edition · 2026</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruang Mata Kuliah | Akademik Nasswa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="course-page" style="margin: 0 auto;">
+        <a class="back-link" href="index.html">← Kembali ke Beranda</a>
+
+        <div id="deadline-notify-box"></div>
+
+        <header class="course-hero">
+            <span class="course-label">Semester 5 · Ruang Belajar</span>
+            <h1 id="course-title">Memuat Mata Kuliah...</h1>
+            <p>
+                Semua materi, tugas, jadwal, dan catatan untuk mata kuliah ini tersimpan rapi di sini.
+            </p>
+
+            <div class="course-info-grid">
+                <div class="info-box"><small>📅 Hari</small><strong id="course-day">-</strong></div>
+                <div class="info-box"><small>⏰ Waktu</small><strong id="course-time">-</strong></div>
+                <div class="info-box"><small>📍 Lokasi</small><strong>Gedung Machdor</strong></div>
+                <div class="info-box"><small>🚪 Ruangan</small><strong id="course-room">-</strong></div>
+            </div>
+        </header>
+
+        <!-- TAMPILAN BERSIH MATERI PERKULIAHAN -->
+        <section class="course-section" id="materi">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                <div>
+                    <h2 style="margin-bottom:4px;">📚 Materi Perkuliahan</h2>
+                    <p class="section-description" style="margin-bottom:0;">Daftar file dan tautan materi yang tersimpan di folder mata kuliah ini.</p>
+                </div>
+                <a href="index.html#quick-upload" class="btn-mini">+ Tambah di Beranda</a>
+            </div>
+
+            <div id="materi-list"></div>
+        </section>
+
+        <!-- TAMPILAN BERSIH TUGAS KULIAH -->
+        <section class="course-section" id="tugas">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                <div>
+                    <h2 style="margin-bottom:4px;">📝 Tugas Kuliah</h2>
+                    <p class="section-description" style="margin-bottom:0;">Centang kotak jika sudah selesai. Tugas belum selesai diurutkan dari deadline terdekat.</p>
+                </div>
+                <a href="index.html#quick-upload" class="btn-mini">+ Kumpulkan di Beranda</a>
+            </div>
+
+            <div id="tugas-list"></div>
+        </section>
+
+        <!-- CATATAN PRIBADI -->
+        <section class="course-section" id="catatan">
+            <h2>✍️ Catatan Pribadi</h2>
+            <p class="section-description">Catatan khusus mata kuliah ini otomatis tersimpan di perangkatmu.</p>
+            <textarea class="note-area" id="course-note" placeholder="Tulis rangkuman atau catatan kuliahmu di sini..."></textarea>
+            <button class="save-note" id="save-note">Simpan Catatan ♡</button>
+            <p class="save-status" id="save-status" aria-live="polite"></p>
+        </section>
+
+        <footer style="text-align:center; background:none; border:none; color:#6e6369; font-size:13px; padding:10px 0;">
+            Made with ♡ · Academic Space by Nasswa
+        </footer>
+    </main>
+
+    <script>
+        const DATA_MATA_KULIAH = {
+            "manajemen-proyek-ti": {
+                nama: "Manajemen Proyek TI",
+                hari: "Senin",
+                waktu: "07.30–10.00",
+                ruang: "D 406"
+            },
+            "pemrograman-platform": {
+                nama: "Pemrograman Berbasis Platform",
+                hari: "Senin",
+                waktu: "10.00–12.30",
+                ruang: "D 406"
+            },
+            "interaksi-manusia-komputer": {
+                nama: "Interaksi Manusia & Komputer",
+                hari: "Fleksibel",
+                waktu: "Menyesuaikan",
+                ruang: "Ruang Kuliah"
+            },
+            "analisis-design-pl": {
+                nama: "Analisis dan Design PL",
+                hari: "Senin",
+                waktu: "13.00–15.30",
+                ruang: "D 406"
+            },
+            "tata-tulis-ilmiah": {
+                nama: "Tata Tulis Ilmiah",
+                hari: "Selasa",
+                waktu: "Mulai 09.10",
+                ruang: "D 406"
+            },
+            "teknologi-ar-vr": {
+                nama: "Teknologi AR/VR",
+                hari: "Selasa",
+                waktu: "13.00–15.30",
+                ruang: "D 406"
+            },
+            "ai-computing-platform": {
+                nama: "AI Computing Platform",
+                hari: "Rabu",
+                waktu: "18.00–22.00",
+                ruang: "D 303"
+            },
+            "aik-4": {
+                nama: "AIK 4",
+                hari: "Kamis",
+                waktu: "10.00–11.40",
+                ruang: "D 405"
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const courseId = params.get("id") || "manajemen-proyek-ti";
+        const info = DATA_MATA_KULIAH[courseId] || DATA_MATA_KULIAH["manajemen-proyek-ti"];
+
+        document.body.setAttribute("data-course-id", courseId);
+        document.body.setAttribute("data-course-name", info.nama);
+        document.title = `${info.nama} | Akademik Nasswa`;
+
+        document.getElementById("course-title").textContent = info.nama;
+        document.getElementById("course-day").textContent = info.hari;
+        document.getElementById("course-time").textContent = info.waktu;
+        document.getElementById("course-room").textContent = info.ruang;
+
+        const noteKey = "catatan-" + courseId;
+        const noteArea = document.getElementById("course-note");
+        const saveButton = document.getElementById("save-note");
+        const saveStatus = document.getElementById("save-status");
+
+        noteArea.value = localStorage.getItem(noteKey) || "";
+        saveButton.addEventListener("click", () => {
+            localStorage.setItem(noteKey, noteArea.value);
+            saveStatus.textContent = "Catatan berhasil disimpan ♡";
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
