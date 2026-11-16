@@ -1,10 +1,16 @@
-/* =========================================
-   MY ACADEMIC SPACE — SEMESTER 5
-   Folder Arsip + Notifikasi Deadline + Urutan Tugas
-========================================= */
+/* =========================================================
+   MY ACADEMIC SPACE — GIRLY POLKA EDITION (JS)
+   ========================================================= */
 
 const STORAGE_KEY = "nasswa_academic_archive_v2";
+const PROJECT_STORAGE_KEY = "nasswa_academic_projects_v1";
 
+/* ---------------------------------------------------------
+   DATA BAWAAN & ARSIP PDF PERMANEN (TAMPIL DI SEMUA PERANGKAT)
+   Cara tambah PDF baru:
+   1. Upload file PDF ke repository GitHub (misal: Tugas-Baru.pdf)
+   2. Tambahkan blok objek baru di dalam array di bawah ini
+   --------------------------------------------------------- */
 const DATA_BAWAAN_DEFAULT = [
     {
         id: "default-tugas-1",
@@ -13,8 +19,8 @@ const DATA_BAWAAN_DEFAULT = [
         type: "tugas",
         title: "Cetak Biru Inklusivitas Digital (Kelompok 2)",
         deadline: "2026-11-20",
-        completed: false,
-        note: "Presentasi UX & Design System",
+        completed: true,
+        note: "Presentasi UX, Aksesibilitas & Design System · Sudah dikumpulkan",
         linkUrl: "",
         fileName: "",
         fileDataUrl: "",
@@ -27,8 +33,22 @@ const DATA_BAWAAN_DEFAULT = [
         type: "tugas",
         title: "Dokumen StockMate (Extreme Programming)",
         deadline: "2026-11-22",
+        completed: true,
+        note: "Quiz Assignment · Sudah dikumpulkan",
+        linkUrl: "",
+        fileName: "",
+        fileDataUrl: "",
+        date: "16 Nov 2026"
+    },
+    {
+        id: "default-tugas-3",
+        courseId: "interaksi-manusia-komputer",
+        courseName: "Interaksi Manusia & Komputer",
+        type: "tugas",
+        title: "Analisis Error Prevention E-Commerce (Shopee)",
+        deadline: "2026-11-24",
         completed: false,
-        note: "Quiz Assignment",
+        note: "Evaluasi heuristik Nielsen & Ben Shneiderman",
         linkUrl: "",
         fileName: "",
         fileDataUrl: "",
@@ -39,10 +59,10 @@ const DATA_BAWAAN_DEFAULT = [
         courseId: "teknologi-ar-vr",
         courseName: "Teknologi AR/VR",
         type: "materi",
-        title: "Studi Kasus Ossom VR (Simulasi Medis)",
+        title: "Studi Kasus Ossom VR (Simulasi Medis vs Militer)",
         deadline: "",
         completed: false,
-        note: "Referensi Tugas 2",
+        note: "Referensi reliabilitas & keamanan aplikasi XR",
         linkUrl: "",
         fileName: "",
         fileDataUrl: "",
@@ -55,447 +75,544 @@ function getArchiveData() {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
             const parsed = JSON.parse(raw);
-            if (parsed.length > 0) return parsed;
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                return parsed;
+            }
         }
-    } catch (e) {}
-    return DATA_BAWAAN_DEFAULT;
+    } catch (e) {
+        console.error("Gagal membaca localStorage:", e);
+    }
+    return [...DATA_BAWAAN_DEFAULT];
 }
 
-function saveArchiveData(items) {
+function saveArchiveData(data) {
     try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-        return true;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
-        alert("Ukuran file terlalu besar untuk penyimpanan browser (maks 2.5MB). Gunakan tautan Google Drive/GitHub.");
-        return false;
+        alert("Ukuran file terlalu besar untuk penyimpanan browser lokal. Gunakan link Google Drive atau simpan file PDF langsung ke repository GitHub ya!");
     }
 }
 
-function formatTanggalSekarang() {
-    return new Date().toLocaleDateString("id-ID", {
-        day: "2-digit",
+function getDeadlineInfo(deadlineStr, isCompleted) {
+    if (isCompleted) {
+        return { text: "Selesai ✓", cls: "badge-done", diffDays: 9999 };
+    }
+    if (!deadlineStr) {
+        return { text: "Tanpa Deadline", cls: "badge-normal", diffDays: 999 };
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const target = new Date(deadlineStr + "T00:00:00");
+    const diffTime = target - today;
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+    const formatted = target.toLocaleDateString("id-ID", {
+        day: "numeric",
         month: "short",
         year: "numeric"
     });
+
+    if (diffDays < 0) {
+        return { text: `Terlewat (${formatted})`, cls: "badge-urgent", diffDays };
+    } else if (diffDays === 0) {
+        return { text: `Hari Ini! (${formatted})`, cls: "badge-urgent", diffDays };
+    } else if (diffDays === 1) {
+        return { text: `Besok (${formatted})`, cls: "badge-urgent", diffDays };
+    } else if (diffDays <= 3) {
+        return { text: `${diffDays} hari lagi (${formatted})`, cls: "badge-soon", diffDays };
+    } else {
+        return { text: formatted, cls: "badge-normal", diffDays };
+    }
 }
 
-function hitungInfoDeadline(deadlineStr, isDone) {
-    if (isDone) {
-        return { label: "✓ Selesai", level: "done", diffMs: Infinity };
-    }
-    if (!deadlineStr) {
-        return { label: "Tanpa tenggat", level: "normal", diffMs: Infinity - 1 };
-    }
+function sortTasksByUrgency(tasks) {
+    return [...tasks].sort((a, b) => {
+        const compA = a.completed ? 1 : 0;
+        const compB = b.completed ? 1 : 0;
+        if (compA !== compB) return compA - compB;
 
-    const target = new Date(deadlineStr + "T23:59:59");
-    const now = new Date();
-    const diffMs = target - now;
-    const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-    const tglLabel = target.toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "short"
+        const infoA = getDeadlineInfo(a.deadline, a.completed);
+        const infoB = getDeadlineInfo(b.deadline, b.completed);
+        return infoA.diffDays - infoB.diffDays;
     });
-
-    if (diffMs < 0) {
-        return { label: `⚠ Terlewat (${tglLabel})`, level: "urgent", diffMs };
-    }
-    if (diffHours <= 48) {
-        return {
-            label: diffDays <= 1 ? `🔥 Deadline Hari Ini/Besok (${tglLabel})` : `⏰ H-${diffDays} (${tglLabel})`,
-            level: "urgent",
-            diffMs
-        };
-    }
-    if (diffDays <= 5) {
-        return { label: `⏳ H-${diffDays} (${tglLabel})`, level: "soon", diffMs };
-    }
-    return { label: `📅 Tenggat ${tglLabel}`, level: "normal", diffMs };
 }
 
-function urutkanTugas(items) {
-    return [...items].sort((a, b) => {
-        if (Boolean(a.completed) !== Boolean(b.completed)) {
-            return a.completed ? 1 : -1;
-        }
-        const timeA = a.deadline ? new Date(a.deadline + "T23:59:59").getTime() : Number.MAX_SAFE_INTEGER;
-        const timeB = b.deadline ? new Date(b.deadline + "T23:59:59").getTime() : Number.MAX_SAFE_INTEGER;
-        return timeA - timeB;
-    });
+function escapeHTML(str) {
+    if (!str) return "";
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
 }
 
 function tambahItemAkademik({ courseId, courseName, type, title, deadline, note, linkUrl, fileInput }) {
-    const items = getArchiveData();
+    const cleanTitle = (title || "").trim();
+    if (!cleanTitle) return;
 
-    const simpan = (fileName, fileDataUrl) => {
-        items.unshift({
+    const finalizeSave = (fileName, fileDataUrl) => {
+        const current = getArchiveData();
+        const newItem = {
             id: "item-" + Date.now(),
-            courseId,
-            courseName,
-            type,
-            title: title.trim(),
-            deadline: deadline || "",
+            courseId: courseId,
+            courseName: courseName,
+            type: type,
+            title: cleanTitle,
+            deadline: type === "tugas" ? (deadline || "") : "",
             completed: false,
-            note: note ? note.trim() : "",
-            linkUrl: linkUrl ? linkUrl.trim() : "",
+            note: (note || "").trim(),
+            linkUrl: (linkUrl || "").trim(),
             fileName: fileName || "",
             fileDataUrl: fileDataUrl || "",
-            date: formatTanggalSekarang()
-        });
+            date: new Date().toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            })
+        };
 
-        if (saveArchiveData(items)) {
-            renderSemuaTampilan();
-        }
+        current.unshift(newItem);
+        saveArchiveData(current);
+        renderAllSections();
     };
 
     if (fileInput && fileInput.files && fileInput.files[0]) {
         const file = fileInput.files[0];
-        if (file.size > 2.5 * 1024 * 1024) {
-            alert("Ukuran file maksimal 2.5 MB. Untuk file besar, unggah ke Google Drive lalu tempel link-nya.");
+        if (file.size > 3.5 * 1024 * 1024) {
+            alert("Ukuran file maksimal 3.5 MB untuk simpan cepat di browser. Untuk PDF besar, upload ke GitHub atau Google Drive lalu tempel link/nama file-nya ya!");
             return;
         }
         const reader = new FileReader();
-        reader.onload = (e) => simpan(file.name, e.target.result);
+        reader.onload = function (e) {
+            finalizeSave(file.name, e.target.result);
+        };
         reader.readAsDataURL(file);
     } else {
-        simpan("", "");
+        finalizeSave("", "");
     }
 }
 
-function toggleSelesaiTugas(itemId) {
-    const items = getArchiveData().map(item => {
-        if (item.id === itemId) {
-            return { ...item, completed: !item.completed };
-        }
-        return item;
-    });
-    saveArchiveData(items);
-    renderSemuaTampilan();
+function toggleTaskComplete(id) {
+    const data = getArchiveData();
+    const idx = data.findIndex(item => item.id === id);
+    if (idx !== -1) {
+        data[idx].completed = !data[idx].completed;
+        saveArchiveData(data);
+        renderAllSections();
+    }
 }
 
-function hapusItemAkademik(itemId) {
+function hapusItemAkademik(id) {
     if (!confirm("Hapus item ini dari folder arsip?")) return;
-    const updated = getArchiveData().filter(item => item.id !== itemId);
-    saveArchiveData(updated);
-    renderSemuaTampilan();
+    const data = getArchiveData().filter(item => item.id !== id);
+    saveArchiveData(data);
+    renderAllSections();
 }
 
-/* ===== NOTIFIKASI DEADLINE DEKAT ===== */
-function renderDeadlineNotification() {
-    const banner = document.getElementById("deadline-notify-box");
-    if (!banner) return;
+function renderDeadlineBanner(containerId, filterCourseId = null) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-    const tugasBelumSelesai = urutkanTugas(
-        getArchiveData().filter(item => item.type === "tugas" && !item.completed)
-    );
+    let tasks = getArchiveData().filter(item => item.type === "tugas" && !item.completed);
+    if (filterCourseId) {
+        tasks = tasks.filter(item => item.courseId === filterCourseId);
+    }
 
-    const mendesak = tugasBelumSelesai.filter(item => {
-        const info = hitungInfoDeadline(item.deadline, false);
-        return info.level === "urgent" || info.level === "soon";
+    const urgentTasks = sortTasksByUrgency(tasks).filter(t => {
+        const info = getDeadlineInfo(t.deadline, false);
+        return t.deadline && info.diffDays <= 3;
     });
 
-    if (mendesak.length === 0) {
-        banner.innerHTML = `
-            <div class="deadline-banner safe">
-                <span class="deadline-banner-icon">🎀</span>
-                <div>
-                    <h4>Semua Deadline Aman!</h4>
-                    <p style="font-size:13px; color:#1b181a;">
-                        ${tugasBelumSelesai.length > 0
-                            ? `Ada ${tugasBelumSelesai.length} tugas belum selesai, tapi belum ada yang mendekati tenggat waktu.`
-                            : "Tidak ada tanggungan tugas mendesak saat ini. Keep blooming ♡"}
-                    </p>
-                </div>
-            </div>
-        `;
+    if (urgentTasks.length === 0) {
+        container.innerHTML = "";
         return;
     }
 
-    const listHtml = mendesak.map(t => {
-        const info = hitungInfoDeadline(t.deadline, false);
-        return `<li><strong>${t.title}</strong> (${t.courseName}) — <span>${info.label}</span></li>`;
-    }).join("");
+    const listText = urgentTasks
+        .map(t => {
+            const info = getDeadlineInfo(t.deadline, false);
+            return `<strong>${escapeHTML(t.title)}</strong> (${escapeHTML(t.courseName)} · <em>${info.text}</em>)`;
+        })
+        .join(" &nbsp;•&nbsp; ");
 
-    banner.innerHTML = `
-        <div class="deadline-banner">
-            <span class="deadline-banner-icon">🔔</span>
+    container.innerHTML = `
+        <div class="deadline-banner" role="status">
+            <span class="bell-icon">🔔</span>
             <div>
-                <h4>Perhatian! ${mendesak.length} Tugas Mendekati Deadline:</h4>
-                <ul>${listHtml}</ul>
+                <div class="banner-title">Pengingat Deadline Terdekat (${urgentTasks.length} Tugas Belum Selesai)</div>
+                <div class="banner-desc">${listText}</div>
             </div>
         </div>
     `;
 }
 
-/* ===== RENDER FOLDER DI INDEX.HTML ===== */
-function renderIndexFolders(type, containerId, emptyPlaceholderHtml) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
+function renderArchiveItemHTML(item, showCourseBadge = true) {
+    const isTugas = item.type === "tugas";
+    const deadlineInfo = isTugas ? getDeadlineInfo(item.deadline, item.completed) : null;
 
-    let allItems = getArchiveData().filter(item => item.type === type);
-    if (allItems.length === 0) {
-        container.innerHTML = emptyPlaceholderHtml;
-        return;
+    let actionButtons = "";
+    if (item.linkUrl) {
+        actionButtons += `<a href="${escapeHTML(item.linkUrl)}" target="_blank" rel="noopener noreferrer" class="btn-mini">🔗 Buka Link</a>`;
     }
-
-    if (type === "tugas") {
-        allItems = urutkanTugas(allItems);
+    if (item.fileDataUrl && item.fileName) {
+        actionButtons += `<a href="${item.fileDataUrl}" download="${escapeHTML(item.fileName)}" target="_blank" class="btn-mini">📄 ${escapeHTML(item.fileName)}</a>`;
     }
+    actionButtons += `<button type="button" class="btn-mini btn-delete" onclick="hapusItemAkademik('${item.id}')">Hapus</button>`;
 
-    const grouped = {};
-    allItems.forEach(item => {
-        if (!grouped[item.courseId]) {
-            grouped[item.courseId] = { courseName: item.courseName, items: [] };
-        }
-        grouped[item.courseId].items.push(item);
-    });
+    const checkboxHTML = isTugas
+        ? `<input type="checkbox" class="task-checkbox" ${item.completed ? "checked" : ""} onchange="toggleTaskComplete('${item.id}')" title="Tandai selesai / belum selesai">`
+        : `<span style="font-size:18px; line-height:1;">📄</span>`;
 
-    let html = `<div class="folder-grid">`;
-    Object.keys(grouped).forEach(courseId => {
-        const folder = grouped[courseId];
-        const tagLabel = type === "materi" ? "FOLDER MATERI" : "FOLDER TUGAS";
-
-        html += `
-            <div class="folder-box" data-tag="${tagLabel}">
-                <div class="folder-header">
-                    <a href="mata-kuliah.html?id=${courseId}" class="folder-title" style="text-decoration:none;">📁 ${folder.courseName}</a>
-                    <span class="folder-count">${folder.items.length} berkas</span>
-                </div>
-                <div class="folder-items">
-        `;
-
-        folder.items.forEach(item => {
-            const actionBtn = item.fileDataUrl
-                ? `<a href="${item.fileDataUrl}" download="${item.fileName}" class="btn-mini">Unduh</a>`
-                : item.linkUrl
-                ? `<a href="${item.linkUrl}" target="_blank" rel="noopener" class="btn-mini">Buka</a>`
-                : "";
-
-            const deadlineInfo = type === "tugas" ? hitungInfoDeadline(item.deadline, item.completed) : null;
-            const checkHtml = type === "tugas"
-                ? `<input type="checkbox" class="task-checkbox" ${item.completed ? "checked" : ""} onchange="toggleSelesaiTugas('${item.id}')" title="Tandai selesai">`
-                : "";
-
-            html += `
-                <div class="folder-item ${item.completed ? "is-done" : ""}">
-                    <div class="task-check-wrap" style="overflow:hidden;">
-                        ${checkHtml}
-                        <div class="folder-item-info">
-                            <span class="folder-item-title" title="${item.title}">${item.title}</span>
-                            <span class="folder-item-meta">${item.fileName || item.date}</span>
-                            ${deadlineInfo ? `<span class="deadline-pill ${deadlineInfo.level}">${deadlineInfo.label}</span>` : ""}
-                        </div>
+    return `
+        <div class="archive-item ${item.completed ? "is-done" : ""}">
+            <div class="archive-left">
+                ${checkboxHTML}
+                <div>
+                    <div class="archive-title">${escapeHTML(item.title)}</div>
+                    <div class="archive-meta">
+                        ${showCourseBadge ? `<span class="badge-pill badge-course">${escapeHTML(item.courseName)}</span>` : ""}
+                        ${isTugas ? `<span class="badge-pill ${deadlineInfo.cls}">⏰ ${deadlineInfo.text}</span>` : `<span class="badge-pill badge-normal">📅 Diunggah ${escapeHTML(item.date)}</span>`}
+                        ${item.note ? `<span>· ${escapeHTML(item.note)}</span>` : ""}
                     </div>
-                    <div class="folder-item-actions">
-                        ${actionBtn}
-                        <button type="button" class="btn-mini danger" onclick="hapusItemAkademik('${item.id}')">✕</button>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += `</div></div>`;
-    });
-    html += `</div>`;
-    container.innerHTML = html;
-}
-
-/* ===== RENDER DAFTAR DI MATA-KULIAH.HTML ===== */
-function renderCourseList(courseId, type, containerId, emptyText) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-
-    let items = getArchiveData().filter(item => item.courseId === courseId && item.type === type);
-    if (items.length === 0) {
-        container.innerHTML = `<div class="empty-state">${emptyText}</div>`;
-        return;
-    }
-
-    if (type === "tugas") {
-        items = urutkanTugas(items);
-    }
-
-    let html = `<div class="submitted-list">`;
-    items.forEach(item => {
-        const deadlineInfo = type === "tugas" ? hitungInfoDeadline(item.deadline, item.completed) : null;
-        const badgeHtml = type === "tugas"
-            ? `<span class="deadline-pill ${deadlineInfo.level}">${deadlineInfo.label}</span>`
-            : `<span class="badge-status">📚 Materi</span>`;
-
-        const checkHtml = type === "tugas"
-            ? `<input type="checkbox" class="task-checkbox" ${item.completed ? "checked" : ""} onchange="toggleSelesaiTugas('${item.id}')">`
-            : "";
-
-        const fileBtn = item.fileDataUrl ? `<a href="${item.fileDataUrl}" download="${item.fileName}" class="btn-mini">⬇ Unduh</a>` : "";
-        const linkBtn = item.linkUrl ? `<a href="${item.linkUrl}" target="_blank" rel="noopener" class="btn-mini">🔗 Buka</a>` : "";
-
-        html += `
-            <div class="submitted-card ${item.completed ? "is-done" : ""}">
-                <div class="task-check-wrap">
-                    ${checkHtml}
-                    <div class="submitted-main">
-                        <h4>${item.title}</h4>
-                        <p>Ditambahkan ${item.date}${item.note ? " · " + item.note : ""}</p>
-                        ${badgeHtml}
-                    </div>
-                </div>
-                <div class="folder-item-actions">
-                    ${fileBtn}
-                    ${linkBtn}
-                    <button type="button" class="btn-mini danger" onclick="hapusItemAkademik('${item.id}')">Hapus</button>
                 </div>
             </div>
-        `;
-    });
-    html += `</div>`;
-    container.innerHTML = html;
+            <div class="archive-actions">
+                ${actionButtons}
+            </div>
+        </div>
+    `;
 }
 
-function renderSemuaTampilan() {
-    renderDeadlineNotification();
+function renderHomeFolders() {
+    const materiHome = document.getElementById("home-materi-folders");
+    const tugasHome = document.getElementById("home-tugas-folders");
+    if (!materiHome && !tugasHome) return;
 
-    renderIndexFolders(
-        "materi",
-        "index-materi-folders",
-        `<div class="info-note"><span>🌷</span><p>Belum ada folder materi. Unggah materi dari form di atas untuk menyimpannya ke dalam folder mata kuliah.</p></div>`
-    );
+    const allData = getArchiveData();
 
-    renderIndexFolders(
-        "tugas",
-        "index-tugas-folders",
-        `<div class="info-note"><span>💌</span><p>Belum ada tugas. Tugas yang belum selesai akan otomatis diurutkan dari deadline paling dekat di sini.</p></div>`
-    );
-
-    const coursePage = document.querySelector("[data-course-id]");
-    if (coursePage) {
-        const courseId = coursePage.getAttribute("data-course-id");
-        renderCourseList(courseId, "materi", "materi-list", "Belum ada materi yang tersimpan di folder mata kuliah ini.");
-        renderCourseList(courseId, "tugas", "tugas-list", "Belum ada tugas yang dikumpulkan untuk mata kuliah ini.");
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-    renderSemuaTampilan();
-
-    const quickForm = document.getElementById("quick-submit-form");
-    if (quickForm) {
-        quickForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const selectMatkul = document.getElementById("quick-matkul");
-            tambahItemAkademik({
-                courseId: selectMatkul.value,
-                courseName: selectMatkul.options[selectMatkul.selectedIndex].text,
-                type: document.getElementById("quick-kategori").value,
-                title: document.getElementById("quick-judul").value,
-                deadline: document.getElementById("quick-deadline").value,
-                note: document.getElementById("quick-catatan").value,
-                linkUrl: document.getElementById("quick-link").value,
-                fileInput: document.getElementById("quick-file")
+    if (materiHome) {
+        const materiItems = allData.filter(i => i.type === "materi");
+        if (materiItems.length === 0) {
+            materiHome.innerHTML = `
+                <div class="empty-state">
+                    <span class="empty-icon">🌷</span>
+                    <p>Belum ada folder materi yang diunggah. Tambahkan materi dari form di atas untuk menyimpannya ke dalam folder mata kuliah.</p>
+                </div>
+            `;
+        } else {
+            const grouped = {};
+            materiItems.forEach(item => {
+                if (!grouped[item.courseId]) {
+                    grouped[item.courseId] = { name: item.courseName, items: [] };
+                }
+                grouped[item.courseId].items.push(item);
             });
-            quickForm.reset();
-        });
+
+            materiHome.innerHTML = Object.entries(grouped)
+                .map(([cId, group]) => `
+                    <div class="folder-group">
+                        <div class="folder-header">
+                            <span class="folder-name">📁 ${escapeHTML(group.name)}</span>
+                            <a href="mata-kuliah.html?id=${encodeURIComponent(cId)}" class="btn-mini">Buka Ruang Kelas (${group.items.length}) →</a>
+                        </div>
+                        <div class="archive-list">
+                            ${group.items.map(item => renderArchiveItemHTML(item, false)).join("")}
+                        </div>
+                    </div>
+                `)
+                .join("");
+        }
     }
-});
-/* =========================================
-   PROJECT SYSTEM ARCHIVE
-========================================= */
 
-const PROJECT_STORAGE_KEY = "nasswa_project_system_v1";
+    if (tugasHome) {
+        const tugasItems = sortTasksByUrgency(allData.filter(i => i.type === "tugas"));
+        if (tugasItems.length === 0) {
+            tugasHome.innerHTML = `
+                <div class="empty-state">
+                    <span class="empty-icon">✨</span>
+                    <p>Belum ada tugas. Tugas yang kamu tambahkan akan otomatis diurutkan berdasarkan deadline terdekat di sini.</p>
+                </div>
+            `;
+        } else {
+            tugasHome.innerHTML = `
+                <div class="archive-list">
+                    ${tugasItems.map(item => renderArchiveItemHTML(item, true)).join("")}
+                </div>
+            `;
+        }
+    }
+}
 
-function getProjectData() {
+function renderCoursePageFolders() {
+    const courseId = document.body.getAttribute("data-course-id");
+    if (!courseId) return;
+
+    renderDeadlineBanner("deadline-notify-box", courseId);
+
+    const allData = getArchiveData().filter(item => item.courseId === courseId);
+    const materiListEl = document.getElementById("materi-list");
+    const tugasListEl = document.getElementById("tugas-list");
+
+    if (materiListEl) {
+        const materiItems = allData.filter(i => i.type === "materi");
+        if (materiItems.length === 0) {
+            materiListEl.innerHTML = `
+                <div class="empty-state">
+                    <span class="empty-icon">📚</span>
+                    <p>Belum ada materi di folder mata kuliah ini. Kamu bisa menambahkannya melalui halaman Beranda.</p>
+                </div>
+            `;
+        } else {
+            materiListEl.innerHTML = `
+                <div class="archive-list">
+                    ${materiItems.map(item => renderArchiveItemHTML(item, false)).join("")}
+                </div>
+            `;
+        }
+    }
+
+    if (tugasListEl) {
+        const tugasItems = sortTasksByUrgency(allData.filter(i => i.type === "tugas"));
+        if (tugasItems.length === 0) {
+            tugasListEl.innerHTML = `
+                <div class="empty-state">
+                    <span class="empty-icon">📝</span>
+                    <p>Belum ada tugas di mata kuliah ini. Kumpulkan tugas melalui form di atas agar tersimpan rapi di sini.</p>
+                </div>
+            `;
+        } else {
+            tugasListEl.innerHTML = `
+                <div class="archive-list">
+                    ${tugasItems.map(item => renderArchiveItemHTML(item, false)).join("")}
+                </div>
+            `;
+        }
+    }
+}
+
+/* =========================================================
+   PROJECT SYSTEM (INTERAKTIF & TERHUBUNG KE LOCALSTORAGE)
+   ========================================================= */
+const DEFAULT_PROJECTS = [
+    {
+        id: "proj-academic-space",
+        title: "My Academic Space",
+        category: "Web Development",
+        status: "Active",
+        desc: "Website pengelolaan arsip perkuliahan, materi, jadwal, dan pengingat deadline Semester 5 dengan tema editorial Girly Polka.",
+        tags: ["HTML5", "CSS3", "JavaScript", "LocalStorage"],
+        demoUrl: "index.html",
+        repoUrl: "https://github.com/nasswaovita/my-academic-space"
+    },
+    {
+        id: "proj-stockmate",
+        title: "StockMate POS & Inventory",
+        category: "Software Engineering",
+        status: "In Progress",
+        desc: "Sistem manajemen inventaris dan Point of Sale (POS) berbasis web menggunakan metode Extreme Programming.",
+        tags: ["Web App", "Inventory", "POS", "XP"],
+        demoUrl: "",
+        repoUrl: ""
+    },
+    {
+        id: "proj-klik-cart",
+        title: "Klik Cart E-Commerce",
+        category: "UI/UX & Web",
+        status: "In Progress",
+        desc: "Aplikasi katalog belanja online dengan validasi varian produk dan pencegahan error checkout berbasis prinsip heuristik UX.",
+        tags: ["E-Commerce", "UI/UX", "Frontend"],
+        demoUrl: "",
+        repoUrl: ""
+    }
+];
+
+function getProjectsData() {
     try {
         const raw = localStorage.getItem(PROJECT_STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
-    } catch (e) {}
-
-    // Data awal otomatis agar tidak kosong saat pertama dibuka
-    return [
-        {
-            id: "proj-default-1",
-            title: "My Academic Space",
-            status: "Completed",
-            tech: "HTML5, CSS3, JavaScript",
-            linkUrl: "https://github.com/nasswaovita/my-academic-space",
-            desc: "Website manajemen materi kuliah, arsip folder tugas, dan pengingat deadline bertema Girly Polka."
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                return parsed;
+            }
         }
-    ];
+    } catch (e) {}
+    return [...DEFAULT_PROJECTS];
 }
 
-function saveProjectData(list) {
+function saveProjectsData(list) {
     localStorage.setItem(PROJECT_STORAGE_KEY, JSON.stringify(list));
 }
 
-function hapusProject(id) {
-    if (!confirm("Hapus project ini dari daftar?")) return;
-    const updated = getProjectData().filter(p => p.id !== id);
-    saveProjectData(updated);
-    renderProjects();
-}
+function renderProjects(filterCat = "Semua") {
+    const grid = document.getElementById("projects-grid");
+    if (!grid) return;
 
-function renderProjects() {
-    const container = document.getElementById("index-project-list");
-    if (!container) return;
+    const allProjects = getProjectsData();
+    const filtered = filterCat === "Semua"
+        ? allProjects
+        : allProjects.filter(p => p.category === filterCat);
 
-    const projects = getProjectData();
-    if (projects.length === 0) {
-        container.innerHTML = `
-            <div class="info-note">
-                <span>✨</span>
-                <p>Belum ada project yang ditambahkan. Isi form di atas untuk menampilkan kartu project kamu di sini.</p>
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <span class="empty-icon">💻</span>
+                <p>Belum ada project pada kategori <strong>${escapeHTML(filterCat)}</strong>. Klik tombol "+ Tambah Project" untuk membuatnya.</p>
             </div>
         `;
         return;
     }
 
-    let html = `<div class="folder-grid">`;
-    projects.forEach(p => {
-        const badgeLabel = p.status === "Completed" ? "✓ Selesai"
-            : p.status === "Planning" ? "📝 Perancangan"
-            : "🚧 In Progress";
+    grid.innerHTML = filtered
+        .map(proj => {
+            const statusClass =
+                proj.status === "Completed" ? "status-completed" :
+                proj.status === "Active" ? "status-active" : "status-progress";
 
-        const linkBtn = p.linkUrl
-            ? `<a href="${p.linkUrl}" target="_blank" rel="noopener" class="btn-mini">🔗 Lihat Repo / Demo</a>`
-            : "";
+            const tagsHTML = (proj.tags || [])
+                .map(t => `<span class="project-tag">#${escapeHTML(t)}</span>`)
+                .join("");
 
-        html += `
-            <div class="folder-box" data-tag="PROJECT SYSTEM">
-                <div class="folder-header">
-                    <span class="folder-title">💻 ${p.title}</span>
-                    <span class="folder-count">${badgeLabel}</span>
-                </div>
-                <p style="font-size:13px; color:#1b181a; margin-bottom:10px; line-height:1.6;">${p.desc}</p>
-                ${p.tech ? `<p style="font-size:11.5px; color:#6e6369; margin-bottom:12px;"><strong>Tech:</strong> ${p.tech}</p>` : ""}
-                <div class="folder-item-actions" style="justify-content:space-between;">
-                    ${linkBtn || "<span></span>"}
-                    <button type="button" class="btn-mini danger" onclick="hapusProject('${p.id}')">Hapus</button>
-                </div>
-            </div>
-        `;
-    });
-    html += `</div>`;
-    container.innerHTML = html;
+            return `
+                <article class="project-card">
+                    <div class="project-card-top">
+                        <span class="project-cat-badge">${escapeHTML(proj.category)}</span>
+                        <span class="project-status ${statusClass}">${escapeHTML(proj.status)}</span>
+                    </div>
+                    <h3>${escapeHTML(proj.title)}</h3>
+                    <p>${escapeHTML(proj.desc)}</p>
+                    <div class="project-tags">${tagsHTML}</div>
+                    <div class="project-card-footer">
+                        <div class="project-links">
+                            ${proj.demoUrl ? `<a href="${escapeHTML(proj.demoUrl)}" target="_blank" rel="noopener noreferrer" class="btn-mini">✨ Preview</a>` : ""}
+                            ${proj.repoUrl ? `<a href="${escapeHTML(proj.repoUrl)}" target="_blank" rel="noopener noreferrer" class="btn-mini">💻 Repo</a>` : ""}
+                        </div>
+                        <button type="button" class="btn-mini btn-delete" onclick="hapusProject('${proj.id}')">Hapus</button>
+                    </div>
+                </article>
+            `;
+        })
+        .join("");
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    renderProjects();
+function hapusProject(id) {
+    if (!confirm("Hapus project ini dari daftar showcase?")) return;
+    const updated = getProjectsData().filter(p => p.id !== id);
+    saveProjectsData(updated);
+    const activeTab = document.querySelector(".filter-pill.active");
+    renderProjects(activeTab ? activeTab.getAttribute("data-filter") : "Semua");
+}
 
-    const projForm = document.getElementById("project-submit-form");
-    if (projForm) {
-        projForm.addEventListener("submit", function (e) {
+function initProjectSystem() {
+    const grid = document.getElementById("projects-grid");
+    if (!grid) return;
+
+    renderProjects("Semua");
+
+    const filterButtons = document.querySelectorAll(".filter-pill");
+    filterButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            filterButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderProjects(btn.getAttribute("data-filter"));
+        });
+    });
+
+    const toggleBtn = document.getElementById("toggle-project-form");
+    const formBox = document.getElementById("project-form-box");
+    const projectForm = document.getElementById("new-project-form");
+
+    if (toggleBtn && formBox) {
+        toggleBtn.addEventListener("click", () => {
+            formBox.classList.toggle("is-hidden");
+        });
+    }
+
+    if (projectForm) {
+        projectForm.addEventListener("submit", e => {
             e.preventDefault();
-            const list = getProjectData();
-            list.unshift({
+            const title = document.getElementById("proj-title").value.trim();
+            const category = document.getElementById("proj-category").value;
+            const status = document.getElementById("proj-status").value;
+            const desc = document.getElementById("proj-desc").value.trim();
+            const tagsRaw = document.getElementById("proj-tags").value;
+            const demoUrl = document.getElementById("proj-demo").value.trim();
+            const repoUrl = document.getElementById("proj-repo").value.trim();
+
+            if (!title) return;
+
+            const tags = tagsRaw
+                .split(",")
+                .map(t => t.trim())
+                .filter(Boolean);
+
+            const current = getProjectsData();
+            current.unshift({
                 id: "proj-" + Date.now(),
-                title: document.getElementById("proj-judul").value.trim(),
-                status: document.getElementById("proj-status").value,
-                tech: document.getElementById("proj-tech").value.trim(),
-                linkUrl: document.getElementById("proj-link").value.trim(),
-                desc: document.getElementById("proj-deskripsi").value.trim()
+                title,
+                category,
+                status,
+                desc: desc || "Project akademik dan eksplorasi teknologi.",
+                tags: tags.length > 0 ? tags : [category],
+                demoUrl,
+                repoUrl
             });
-            saveProjectData(list);
-            projForm.reset();
-            renderProjects();
+
+            saveProjectsData(current);
+            projectForm.reset();
+            if (formBox) formBox.classList.add("is-hidden");
+            renderProjects("Semua");
+        });
+    }
+}
+
+function renderAllSections() {
+    renderDeadlineBanner("home-deadline-banner", null);
+    renderHomeFolders();
+    renderCoursePageFolders();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderAllSections();
+    initProjectSystem();
+
+    const quickForm = document.getElementById("quick-upload-form");
+    if (quickForm) {
+        const typeSelect = document.getElementById("up-type");
+        const deadlineWrapper = document.getElementById("deadline-field-wrapper");
+
+        if (typeSelect && deadlineWrapper) {
+            typeSelect.addEventListener("change", () => {
+                deadlineWrapper.style.display = typeSelect.value === "tugas" ? "flex" : "none";
+            });
+        }
+
+        quickForm.addEventListener("submit", e => {
+            e.preventDefault();
+            const courseSelect = document.getElementById("up-course");
+            const courseId = courseSelect.value;
+            const courseName = courseSelect.options[courseSelect.selectedIndex].text;
+            const type = document.getElementById("up-type").value;
+            const title = document.getElementById("up-title").value;
+            const deadline = document.getElementById("up-deadline").value;
+            const note = document.getElementById("up-note").value;
+            const linkUrl = document.getElementById("up-link").value;
+            const fileInput = document.getElementById("up-file");
+
+            tambahItemAkademik({
+                courseId,
+                courseName,
+                type,
+                title,
+                deadline,
+                note,
+                linkUrl,
+                fileInput
+            });
+
+            quickForm.reset();
+            if (deadlineWrapper) deadlineWrapper.style.display = "flex";
         });
     }
 });
