@@ -16,7 +16,7 @@
             <span class="course-label">Semester 5 · Ruang Belajar</span>
             <h1 id="course-title">Memuat Mata Kuliah...</h1>
             <p>
-                Semua materi, tugas, jadwal, dan catatan untuk mata kuliah ini tersimpan rapi di sini.
+                Semua materi, pengumpulan tugas, jadwal, dan catatan untuk mata kuliah ini tersimpan rapi di sini.
             </p>
 
             <div class="course-info-grid">
@@ -27,28 +27,60 @@
             </div>
         </header>
 
-        <!-- TAMPILAN BERSIH MATERI PERKULIAHAN -->
+        <!-- MATERI PERKULIAHAN -->
         <section class="course-section" id="materi">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
                 <div>
                     <h2 style="margin-bottom:4px;">📚 Materi Perkuliahan</h2>
                     <p class="section-description" style="margin-bottom:0;">Daftar file dan tautan materi yang tersimpan di folder mata kuliah ini.</p>
                 </div>
-                <a href="index.html#quick-upload" class="btn-mini">+ Tambah di Beranda</a>
+                <a href="index.html#quick-upload" class="btn-mini">+ Tambah Materi di Beranda</a>
             </div>
 
             <div id="materi-list"></div>
         </section>
 
-        <!-- TAMPILAN BERSIH TUGAS KULIAH -->
+        <!-- PENGUMPULAN & ARSIP TUGAS KULIAH -->
         <section class="course-section" id="tugas">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
-                <div>
-                    <h2 style="margin-bottom:4px;">📝 Tugas Kuliah</h2>
-                    <p class="section-description" style="margin-bottom:0;">Centang kotak jika sudah selesai. Tugas belum selesai diurutkan dari deadline terdekat.</p>
-                </div>
-                <a href="index.html#quick-upload" class="btn-mini">+ Kumpulkan di Beranda</a>
+            <div style="margin-bottom: 14px;">
+                <h2 style="margin-bottom:4px;">📝 Pengumpulan &amp; Arsip Tugas Kuliah</h2>
+                <p class="section-description" style="margin-bottom:0;">
+                    Kumpulkan tugas mata kuliah ini di bawah. Tugas yang sudah dikumpulkan otomatis tersimpan dan muncul juga di Beranda.
+                </p>
             </div>
+
+            <form id="course-task-form" class="submit-box">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="ct-judul">Judul Tugas</label>
+                        <input type="text" id="ct-judul" class="form-control" placeholder="Contoh: Laporan Praktikum 3 / Tugas Kelompok" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ct-deadline">Tanggal Deadline</label>
+                        <input type="date" id="ct-deadline" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ct-file">Upload File Tugas (PDF / DOCX / ZIP)</label>
+                        <input type="file" id="ct-file" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ct-link">Atau Link Pengumpulan (Drive / GitHub)</label>
+                        <input type="url" id="ct-link" class="form-control" placeholder="https://drive.google.com/...">
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="ct-catatan">Keterangan / Status Pengumpulan</label>
+                        <input type="text" id="ct-catatan" class="form-control" placeholder="Contoh: Sudah dikumpulkan ke e-learning UMC · Kelompok 2">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit-polka">
+                    Kumpulkan &amp; Simpan Tugas ♡
+                </button>
+            </form>
 
             <div id="tugas-list"></div>
         </section>
@@ -141,6 +173,21 @@
         saveButton.addEventListener("click", () => {
             localStorage.setItem(noteKey, noteArea.value);
             saveStatus.textContent = "Catatan berhasil disimpan ♡";
+        });
+
+        document.getElementById("course-task-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            tambahItemAkademik({
+                courseId: courseId,
+                courseName: info.nama,
+                type: "tugas",
+                title: document.getElementById("ct-judul").value,
+                deadline: document.getElementById("ct-deadline").value,
+                note: document.getElementById("ct-catatan").value,
+                linkUrl: document.getElementById("ct-link").value,
+                fileInput: document.getElementById("ct-file")
+            });
+            this.reset();
         });
     </script>
     <script src="script.js"></script>
