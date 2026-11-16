@@ -5,13 +5,60 @@
 
 const STORAGE_KEY = "nasswa_academic_archive_v2";
 
+const DATA_BAWAAN_DEFAULT = [
+    {
+        id: "default-tugas-1",
+        courseId: "pemrograman-platform",
+        courseName: "Pemrograman Berbasis Platform",
+        type: "tugas",
+        title: "Cetak Biru Inklusivitas Digital (Kelompok 2)",
+        deadline: "2026-11-20",
+        completed: false,
+        note: "Presentasi UX & Design System",
+        linkUrl: "",
+        fileName: "",
+        fileDataUrl: "",
+        date: "16 Nov 2026"
+    },
+    {
+        id: "default-tugas-2",
+        courseId: "analisis-design-pl",
+        courseName: "Analisis dan Design PL",
+        type: "tugas",
+        title: "Dokumen StockMate (Extreme Programming)",
+        deadline: "2026-11-22",
+        completed: false,
+        note: "Quiz Assignment",
+        linkUrl: "",
+        fileName: "",
+        fileDataUrl: "",
+        date: "16 Nov 2026"
+    },
+    {
+        id: "default-materi-1",
+        courseId: "teknologi-ar-vr",
+        courseName: "Teknologi AR/VR",
+        type: "materi",
+        title: "Studi Kasus Ossom VR (Simulasi Medis)",
+        deadline: "",
+        completed: false,
+        note: "Referensi Tugas 2",
+        linkUrl: "",
+        fileName: "",
+        fileDataUrl: "",
+        date: "16 Nov 2026"
+    }
+];
+
 function getArchiveData() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-        return [];
-    }
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed.length > 0) return parsed;
+        }
+    } catch (e) {}
+    return DATA_BAWAAN_DEFAULT;
 }
 
 function saveArchiveData(items) {
