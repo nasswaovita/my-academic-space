@@ -26,7 +26,7 @@ const DATA_BAWAAN_DEFAULT = [
         fileDataUrl: "",
         date: "16 Nov 2026"
     },
-    {
+        {
         id: "default-tugas-2",
         courseId: "analisis-design-pl",
         courseName: "Analisis dan Design PL",
@@ -36,9 +36,10 @@ const DATA_BAWAAN_DEFAULT = [
         completed: true,
         note: "Quiz Assignment · Sudah dikumpulkan",
         linkUrl: "",
-        fileName: "",
-        fileDataUrl: "",
+        fileName: "Jawaban_Quiz_StockMate_Nasswa_Ovita_FINAL (1).pdf",
+        fileDataUrl: "Jawaban_Quiz_StockMate_Nasswa_Ovita_FINAL%20(1).pdf",
         date: "16 Nov 2026"
+    
     },
     {
         id: "default-tugas-3",
